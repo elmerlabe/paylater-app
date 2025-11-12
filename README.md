@@ -1,36 +1,163 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PayLater - Ultimate Team Building Debt Solution
+
+A fullstack expense splitting web application built with Next.js, similar to Splitwise. Track shared expenses, split bills, and manage debts within groups/events.
+
+## Features
+
+- **User Authentication**: Secure sign up and login with NextAuth
+- **Event Management**: Create events (groups) with custom names and colors
+- **Member Management**: Add members to events and track their balances
+- **Transaction Tracking**: Record expenses and automatically split them among members
+- **Balance Calculation**: View who owes whom and how much
+- **Member Balance Details**: See detailed breakdown of what each member will pay or receive
+- **Responsive Design**: Mobile-first design with pink/purple gradient theme
+
+## Tech Stack
+
+- **Frontend**: Next.js 14+ (App Router), React, TypeScript, Tailwind CSS
+- **Backend**: Next.js API Routes
+- **Database**: PostgreSQL with Prisma ORM
+- **Authentication**: NextAuth.js with Credentials Provider
+- **Styling**: Tailwind CSS with custom color theme
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+ and npm
+- PostgreSQL database
+
+### 1. Clone and Install
+
+```bash
+cd paylater-app
+npm install
+```
+
+### 2. Database Setup
+
+Update the `.env` file with your PostgreSQL database URL:
+
+```env
+DATABASE_URL="postgresql://user:password@localhost:5432/paylater_db?schema=public"
+NEXTAUTH_SECRET="your-secret-key-change-this-in-production"
+NEXTAUTH_URL="http://localhost:3000"
+```
+
+Generate a secure NextAuth secret:
+
+```bash
+openssl rand -base64 32
+```
+
+### 3. Run Database Migrations
+
+```bash
+npx prisma migrate dev --name init
+npx prisma generate
+```
+
+### 4. Start Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to view the application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+paylater-app/
+├── app/
+│   ├── api/                    # API routes
+│   │   ├── auth/              # Authentication endpoints
+│   │   └── events/            # Event, member, and transaction endpoints
+│   ├── auth/                  # Authentication pages
+│   ├── events/                # Event pages
+│   └── page.tsx               # Landing page
+├── components/                # Reusable components
+├── lib/                       # Utility functions
+│   ├── auth.ts               # NextAuth configuration
+│   ├── balances.ts           # Balance calculation logic
+│   └── prisma.ts             # Prisma client
+├── prisma/
+│   └── schema.prisma         # Database schema
+└── types/                     # TypeScript type definitions
+```
 
-## Learn More
+## Database Schema
 
-To learn more about Next.js, take a look at the following resources:
+- **User**: User accounts with authentication
+- **Event**: Groups/events for tracking shared expenses
+- **Member**: Participants in an event
+- **Transaction**: Recorded expenses
+- **TransactionSplit**: How each transaction is split among members
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## API Routes
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Authentication
+- `POST /api/auth/register` - Register new user
+- `POST /api/auth/[...nextauth]` - NextAuth endpoints
 
-## Deploy on Vercel
+### Events
+- `GET /api/events` - List all events
+- `POST /api/events` - Create new event
+- `GET /api/events/[eventId]` - Get event details
+- `PATCH /api/events/[eventId]` - Update event
+- `DELETE /api/events/[eventId]` - Delete event
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Members
+- `GET /api/events/[eventId]/members` - List event members
+- `POST /api/events/[eventId]/members` - Add members
+- `DELETE /api/events/[eventId]/members/[memberId]` - Remove member
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Transactions
+- `GET /api/events/[eventId]/transactions` - List transactions
+- `POST /api/events/[eventId]/transactions` - Create transaction
+- `DELETE /api/events/[eventId]/transactions/[transactionId]` - Delete transaction
+
+### Balances
+- `GET /api/events/[eventId]/balances` - Calculate member balances
+
+## Features Walkthrough
+
+1. **Sign Up/Login**: Create an account or login
+2. **Create Event**: Add a new event with a custom name and color
+3. **Add Members**: Add members to your event
+4. **Record Transaction**: Add an expense, select who paid, and split among members
+5. **View Balances**: See who owes whom on the event details page
+6. **Member Details**: Click on a member to see detailed "Will Pay" and "Will Receive" breakdowns
+
+## Environment Variables
+
+Required environment variables in `.env`:
+
+```env
+DATABASE_URL="postgresql://..."
+NEXTAUTH_SECRET="your-secret-key"
+NEXTAUTH_URL="http://localhost:3000"
+```
+
+## Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm start` - Start production server
+- `npx prisma studio` - Open Prisma Studio (database GUI)
+- `npx prisma migrate dev` - Run database migrations
+
+## Deployment
+
+### Database
+1. Set up a PostgreSQL database (Vercel Postgres, Supabase, etc.)
+2. Update `DATABASE_URL` in production environment
+
+### Application
+1. Deploy to Vercel, Netlify, or any Node.js hosting
+2. Set environment variables in deployment platform
+3. Run migrations: `npx prisma migrate deploy`
+
+## License
+
+MIT
