@@ -41,7 +41,7 @@ export default function CreateTransaction({
       if (data.event) {
         setEvent(data.event);
         // Select all members by default
-        const allMemberIds = new Set(data.event.members.map((m: Member) => m.id));
+        const allMemberIds = new Set<string>(data.event.members.map((m: Member) => m.id));
         setSelectedMembers(allMemberIds);
       }
     } catch (error) {
